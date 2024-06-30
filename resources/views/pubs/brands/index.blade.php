@@ -1,0 +1,202 @@
+@extends('layouts.app')
+
+@section('content')
+<style>
+    .brand-store-list-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+    }
+    .brand-store-header {
+        text-align: left;
+        color: #444;
+        margin-bottom: 20px;
+    }
+    .filters-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+    .filters-container form,
+    .filters-container .alphabet-filter {
+        flex: 1;
+    }
+    .filters-container .alphabet-filter {
+        text-align: right;
+    }
+    .alphabet-filter a {
+        margin: 2px;
+        color: #555;
+    }
+    .brand-store-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .brand-store-table th, .brand-store-table td {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+    }
+    .brand-store-table th {
+        background-color: #f1f1f1;
+        color: #666;
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 14px;
+    }
+    .brand-store-table td {
+        background-color: #fff;
+        color: #333;
+        font-size: 14px;
+    }
+    .brand-store-table img {
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .brand-store-actions {
+        display: flex;
+        gap: 10px;
+    }
+    .brand-store-actions form {
+        display: inline-block;
+    }
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .pagination {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .pagination li {
+        margin: 0 5px;
+    }
+    .pagination li a,
+    .pagination li span {
+        color: #555;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+    .pagination li a:hover,
+    .pagination li span.active {
+        background-color: #555;
+        color: #fff;
+        border-color: #555;
+    }
+    .btn {
+        font-size: 14px;
+        padding: 8px 12px;
+        border-radius: 4px;
+    }
+    .btn-dark {
+        background-color: #555;
+        color: #fff;
+        border: none;
+    }
+    .btn-dark:hover {
+        background-color: #444;
+    }
+    .btn-outline-dark {
+        border: 1px solid #555;
+        color: #555;
+    }
+    .btn-outline-dark:hover {
+        background-color: #555;
+        color: #fff;
+    }
+</style>
+
+<br>
+<div class="brand-store-list-container">
+    <h1 class="brand-store-header">Liste des Marques/Magasins</h1>
+
+    <!-- Affichage des messages de succès ou d'erreur -->
+    @include('partials.messages')
+
+    <!-- Filtres de tri et de recherche -->
+    <div class="filters-container">
+        <form action="{{ route('brandsStores.index') }}" method="GET" class="form-inline mb-3">
+            <label for="sort" class="mr-2">Trier par:</label>
+            <select name="sort" id="sort" class="form-control mr-2">
+                <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Nom (A-Z)</option>
+                <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Nom (Z-A)</option>
+                <option value="date_added" {{ request('sort') == 'date_added' ? 'selected' : '' }}>Date d'ajout</option>
+            </select>
+            <button type="submit" class="btn btn-dark"><i class="fas fa-filter"></i> Appliquer</button>
+        </form>
+        
+        <form action="{{ route('brandsStores.index') }}" method="GET" class="form-inline mb-3 ml-3">
+            <input type="text" name="search" class="form-control mr-2" placeholder="Rechercher..." value="{{ request('search') }}">
+            <button type="submit" class="btn btn-dark"><i class="fas fa-search"></i> Rechercher</button>
+        </form>
+        
+        <div class="alphabet-filter mb-3 ml-3">
+            @foreach(range('A', 'Z') as $letter)
+                <a href="{{ route('brandsStores.index', array_merge(request()->query(), ['letter' => $letter])) }}" class="btn btn-sm {{ request('letter') == $letter ? 'btn-dark' : 'btn-outline-dark' }}">{{ $letter }}</a>
+            @endforeach
+        </div>
+    </div>
+
+    <!-- Table des marques/magasins -->
+    <div class="table-responsive">
+        <table class="brand-store-table">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Description</th>
+                    <th>Logo</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($brandsStores as $brandStore)
+                <tr>
+                    <td>
+                        <a href="{{ route('brandsStores.show', $brandStore->id) }}" class="font-weight-bold text-dark">{{ $brandStore->name }}</a>
+                    </td>
+                    <td>{{ $brandStore->description }}</td>
+                    <td>
+                        <img src="{{ $brandStore->logo_image ? asset('storage/' . $brandStore->logo_image) : 'https://via.placeholder.com/150' }}" class="img-fluid rounded" width="100" alt="Logo">
+                    </td>
+                    <td class="brand-store-actions">
+                        <a href="{{ route('brandsStores.show', $brandStore->id) }}" class="btn btn-outline-dark btn-sm"><i class="fas fa-eye"></i></a>
+                        <a href="{{ route('brandsStores.edit', $brandStore->id) }}" class="btn btn-outline-dark btn-sm"><i class="fas fa-edit"></i></a>
+                        <form action="{{ route('brandsStores.destroy', $brandStore->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-outline-dark btn-sm" onclick="return confirm('Es-tu sûr de vouloir supprimer cette marque/magasin ?')"><i class="fas fa-trash-alt"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Lien pour ajouter une nouvelle marque/magasin -->
+    <div class="text-center">
+        <a href="{{ route('brandsStores.create') }}" class="btn btn-dark mt-3"><i class="fas fa-plus"></i> Ajouter une nouvelle marque/magasin</a>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container">
+        {{ $brandsStores->links() }}
+    </div>
+</div>
+<br>
+@endsection
+

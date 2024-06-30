@@ -1,0 +1,25 @@
+notes pour le projet MTV
+
+-un bumper MTV doit précédé un début de programme. il doit jouer à la fin d'un promgramme, au retour d'une pause publicitaire.
+
+-les bloc-pubs sont composés de 5 publicités 
+
+-un bloc-pub joue aux 5 clip musicaux.
+
+-les clips avec un rating 13 ans et plus sont joué apres une certaine heure.
+
+-dans un meme bloc-pub, chaque pub doit etre différente.
+
+-dans un meme programe de video clip (une playlist on pourrait dire, un meme clip est joué une seule fois)
+
+-les playlist sont composé aléatoirement selon les criteres de selection du createur.
+
+-les playlists peuvent etre editer avant d'être ajouter au programme et diffusé.
+
+-on peut supprimer un clip, il sera remplacer automatiquement par un autre choisi au hasard selon les criteres du createur ou il pourra etre choisi manuellement.
+
+-les criteres comprendront l'année (ou les années), les genres, 
+
+-on peut exlcure des artistes, clip musicaux specifiques, genres spécifique d'une playlist
+
+-
